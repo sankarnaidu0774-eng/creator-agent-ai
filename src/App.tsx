@@ -45,7 +45,7 @@ export default function App() {
   }
   function exportBrief() {
     if (!scenes) return;
-    const content = ["# Creator Agent AI — Production Brief", "", `Topic: ${topic}`, `Audience: ${audience}`, `Platform: ${platform}`, `Target duration: ${duration}s`, "", ...scenes.flatMap((s, i) => [`## Scene ${i + 1}: ${s.title} (${s.duration}s)`, `Visual: ${s.visual}`, `Narration: ${s.narration}`, ""]), "> Demo template only. No audio, images, video or MP4 has been generated."].join("\\n");
+    const content = ["# Creator Agent AI — Production Brief", "", `Topic: ${topic}`, `Audience: ${audience}`, `Platform: ${platform}`, `Target duration: ${duration}s`, "", ...scenes.flatMap((s, i) => [`## Scene ${i + 1}: ${s.title} (${s.duration}s)`, `Visual: ${s.visual}`, `Narration: ${s.narration}`, ""]), "> Demo template only. No audio, images, video or MP4 has been generated."].join("\n");
     const url = URL.createObjectURL(new Blob([content], { type: "text/markdown" }));
     const a = document.createElement("a"); a.href = url; a.download = "creator-agent-production-brief.md"; a.click(); URL.revokeObjectURL(url);
   }

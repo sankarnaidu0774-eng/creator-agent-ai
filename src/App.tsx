@@ -30,7 +30,20 @@ export default function App() {
   const [duration, setDuration] = useState(30);
   const [scenes, setScenes] = useState<Scene[] | null>(() => { try { const saved = localStorage.getItem("creator.scenes"); return saved ? JSON.parse(saved) as Scene[] : null; } catch { return null; } });
   const [active, setActive] = useState(0);
-  const [notice, setNotice] = useState("");\n  const [tone, setTone] = useState("engaging");\n  const [aiLoading, setAiLoading] = useState(false);\n  const [storyTitle, setStoryTitle] = useState("");\n  const [hashtags, setHashtags] = useState<string[]>([]);\n  const [provider, setProvider] = useState("");\n  useEffect(() => { try { localStorage.setItem("creator.topic", topic); if (scenes) localStorage.setItem("creator.scenes", JSON.stringify(scenes)); } catch { setNotice("Browser storage is unavailable; export your brief to keep a copy."); } }, [topic, scenes]);
+  const [notice, setNotice] = useState("");
+  const [tone, setTone] = useState("engaging");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [storyTitle, setStoryTitle] = useState("");
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [provider, setProvider] = useState("");
+  useEffect(() => {
+    try {
+      localStorage.setItem("creator.topic", topic);
+      if (scenes) localStorage.setItem("creator.scenes", JSON.stringify(scenes));
+    } catch {
+      setNotice("Browser storage is unavailable; export your brief to keep a copy.");
+    }
+  }, [topic, scenes]);
   const total = useMemo(() => scenes?.reduce((n, s) => n + s.duration, 0) ?? 0, [scenes]);
   const current = scenes?.[active];
 
@@ -59,8 +72,18 @@ export default function App() {
   function exportSrt() {
     if (!scenes) return;
     let cursor = 0;
-    const stamp = (seconds: number) => { const h = Math.floor(seconds / 3600); const m = Math.floor((seconds % 3600) / 60); const s = Math.floor(seconds % 60); const ms = Math.round((seconds % 1) * 1000); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")},${String(ms).padStart(3,"0")}`; };
-    const srt = scenes.map((scene, i) => { const start = cursor; cursor += scene.duration; return `${i+1}\\n${stamp(start)} --> ${stamp(cursor)}\\n${scene.narration}\\n`; }).join("\\n");
+    const stamp = (seconds: number) => {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = Math.floor(seconds % 60);
+      const ms = Math.round((seconds % 1) * 1000);
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")},${String(ms).padStart(3, "0")}`;
+    };
+    const srt = scenes.map((scene, i) => {
+      const start = cursor;
+      cursor += scene.duration;
+      return `${i + 1}\\n${stamp(start)} --> ${stamp(cursor)}\\n${scene.narration}\\n`;
+    }).join("\\n");
     downloadFile("creator-agent-captions.srt", srt, "text/plain");
   }
   function readVoiceover() {
@@ -72,8 +95,12 @@ export default function App() {
   }
   async function copyScript() {
     if (!scenes) return;
-    try { await navigator.clipboard.writeText(scenes.map((s,i) => `Scene ${i+1}: ${s.title}\\n${s.narration}`).join("\\n\\n")); setNotice("Voiceover script copied."); }
-    catch { setNotice("Clipboard access is unavailable. Use the export buttons instead."); }
+    try {
+      await navigator.clipboard.writeText(scenes.map((s, i) => `Scene ${i + 1}: ${s.title}\\n${s.narration}`).join("\\n\\n"));
+      setNotice("Voiceover script copied.");
+    } catch {
+      setNotice("Clipboard access is unavailable. Use the export buttons instead.");
+    }
   }
   function edit(key: "visual" | "narration", value: string) {
     setScenes(old => old?.map((s, i) => i === active ? { ...s, [key]: value } : s) ?? null);

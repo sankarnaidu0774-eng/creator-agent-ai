@@ -1,36 +1,50 @@
 # Creator Agent AI
 
-An open-source creator workspace for turning a topic into a short-form video plan.
+An open-source workspace for planning short-form videos.
 
-## Current status
-This repository contains a working frontend MVP: project brief, platform and duration selection, template-based script/storyboard generation, editable scene text, and Markdown export.
+## What works now
+- Responsive React + TypeScript studio UI
+- Project brief: topic, audience, platform, duration and creative tone
+- Demo storyboard generator when no AI provider is configured
+- Server-side AI script/storyboard endpoint for Gemini or OpenAI
+- Editable scenes, visual directions and narration
+- Browser-session autosave for the current draft
+- Browser text-to-speech preview (not an audio-file export)
+- Markdown production brief, JSON storyboard and SRT caption exports
 
-**Demo-only today:** the script is template-generated, not AI-generated. Live LLM calls, image/video generation, text-to-speech, music, captions rendering, FFmpeg, MP4 export, social OAuth, scheduling and publishing are not connected yet. The app must never claim a video was rendered when no MP4 exists.
+## What is not connected yet
+- Image/video generation and media asset storage
+- Downloadable TTS audio, background music and sound effects
+- FFmpeg rendering and validated MP4 output
+- User accounts, cloud project sync and team workspaces
+- Official YouTube / Instagram / Facebook OAuth, scheduling and publishing
 
-## Requirements
-- Node.js 20.19+ or 22+
-- npm
+The interface must not claim that a video is rendered unless a real MP4 artifact has been produced and validated.
 
 ## Run locally
+Requires Node.js 20.19+ or 22+.
+
 ```bash
 npm install
 npm run dev
 ```
-Open the local URL printed by Vite.
 
-## Roadmap
-1. Brief + storyboard MVP
-2. Secure server API and provider adapters (Gemini / OpenAI-compatible / Anthropic)
-3. Asset generation and storage
-4. TTS, captions, licensed audio and FFmpeg render worker
-5. MP4 artifact validation and download
-6. Official YouTube / Instagram / Facebook OAuth and scheduling
+## Configure AI generation
+Copy `.env.example` to `.env.local` for local serverless development, or set environment variables in Vercel Project Settings. Add **one** provider key:
+- `GEMINI_API_KEY` (recommended default model: `gemini-2.5-flash`), or
+- `OPENAI_API_KEY` (default model: `gpt-4o-mini`).
+
+Keys are read only by `/api/generate` on the server. Never put secrets in frontend code or commit real keys. The AI provider may charge for usage; the application itself does not implement subscriptions or payments.
+
+For local API testing, use `vercel dev` after installing the Vercel CLI. `npm run dev` starts the Vite frontend only, so AI calls require a deployed Vercel function or local Vercel dev server.
+
+## Deploy
+Import this repository into Vercel. Framework: Vite; build command: `npm run build`; output directory: `dist`. Add provider environment variables before testing AI generation.
 
 ## Security
-- Never put provider API keys in frontend code or commit them.
-- Use server-side environment variables and secret storage.
+- Never commit API keys or expose them in browser bundles.
 - Social publishing must use official OAuth; never collect social passwords.
-- Mark a job complete only after a valid MP4 exists.
+- Validate and store real media artifacts before marking a render complete.
 
 ## License
-MIT. See [LICENSE](./LICENSE).
+MIT.

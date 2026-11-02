@@ -82,8 +82,8 @@ export default function App() {
     const srt = scenes.map((scene, i) => {
       const start = cursor;
       cursor += scene.duration;
-      return `${i + 1}\\n${stamp(start)} --> ${stamp(cursor)}\\n${scene.narration}\\n`;
-    }).join("\\n");
+      return `${i + 1}\n${stamp(start)} --> ${stamp(cursor)}\n${scene.narration}\n`;
+    }).join("\n");
     downloadFile("creator-agent-captions.srt", srt, "text/plain");
   }
   function readVoiceover() {
@@ -96,7 +96,7 @@ export default function App() {
   async function copyScript() {
     if (!scenes) return;
     try {
-      await navigator.clipboard.writeText(scenes.map((s, i) => `Scene ${i + 1}: ${s.title}\\n${s.narration}`).join("\\n\\n"));
+      await navigator.clipboard.writeText(scenes.map((s, i) => `Scene ${i + 1}: ${s.title}\n${s.narration}`).join("\n\n"));
       setNotice("Voiceover script copied.");
     } catch {
       setNotice("Clipboard access is unavailable. Use the export buttons instead.");
